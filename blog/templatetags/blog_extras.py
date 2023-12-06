@@ -1,3 +1,4 @@
+import logging
 from django import template
 from django.contrib.auth import get_user_model
 from django.utils.html import escape
@@ -7,6 +8,7 @@ from blog.models import Post
 user_model = get_user_model()
 
 register = template.Library()
+logger = logging.getLogger(__name__)
 
 @register.filter
 def author_details(author, current_user=None):
@@ -54,6 +56,7 @@ def endcol():
 @register.inclusion_tag("blog/post-list.html")
 def recent_posts(post):
     posts = Post.objects.exclude(pk=post.pk)[:5]
+    logger.debug("Loaded %d recent posts for post %d", len(posts), post.pk)
     return {"title": "Recent Posts", "posts": posts}
 
 
